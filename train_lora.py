@@ -7,6 +7,10 @@ import os
 
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
+# Kaggle T4 x2: tránh hang DDP / multi-GPU với Trainer đơn giản
+if "CUDA_VISIBLE_DEVICES" not in os.environ:
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 
 import argparse
 import json
@@ -166,10 +170,11 @@ def main() -> None:
         fp16=use_fp16,
         gradient_checkpointing=True,
         report_to=[],
-        dataloader_num_workers=2 if use_cuda else 0,
+        dataloader_num_workers=0,
         remove_unused_columns=False,
         optim="adamw_torch",
         lr_scheduler_type="cosine",
+        ddp_find_unused_parameters=False,
     )
 
     collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding=True, return_tensors="pt")
