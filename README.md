@@ -114,16 +114,22 @@ Rule cứng trong system prompt (`prompts.py`): không đưa Python vào `langua
 
 ```text
 cv-mapper-finetune/
-├── README.md                 ← bạn đang đọc
-├── requirements.txt
-├── prompts.py                # system prompt + format user message
-├── generate_dataset.py       # sinh synthetic + error injection
-├── train_lora.py             # LoRA SFT (bf16 A100 / fp16 T4 / CPU fallback)
-├── kaggle_train.ipynb        # notebook mẫu
 ├── data/
-│   ├── train.jsonl           # ~1440 samples
-│   └── val.jsonl             # ~160 samples
-└── artifacts/                # (local) adapter sau train — gitignore
+│   ├── README.md             # GIẢI THÍCH data (đọc file này)
+│   ├── train.jsonl           # ~9000 mẫu train (~70MB+)
+│   ├── val.jsonl             # ~1000 mẫu val
+│   └── manifest.json         # thống kê
+├── generate_dataset.py       # sinh / tăng thêm data
+├── train_lora.py
+…
+```
+
+**Data không phải PDF.** Mỗi dòng `train.jsonl` là 1 bài chat: draft JSON sai + text section → JSON đúng. Mở rộng folder `data/` trên Kaggle Input để thấy file.
+
+Tăng data bất cứ lúc nào:
+
+```bash
+python generate_dataset.py --n 20000
 ```
 
 Mỗi dòng JSONL dạng chat:

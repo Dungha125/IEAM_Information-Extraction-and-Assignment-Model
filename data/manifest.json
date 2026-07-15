@@ -1,0 +1,18 @@
+{
+  "train_samples": 9000,
+  "val_samples": 1000,
+  "avg_completion_chars": 2713,
+  "format": "chat JSONL — messages[system,user,assistant]",
+  "task": "CV field placement correction (wrong draft → correct profile JSON)",
+  "languages": [
+    "vi",
+    "en"
+  ],
+  "error_injections": [
+    "swap_title",
+    "merge_jobs",
+    "edu_in_awards",
+    "prog_in_languages",
+    "merge_projects"
+  ]
+}

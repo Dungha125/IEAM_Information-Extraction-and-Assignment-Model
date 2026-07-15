@@ -18,40 +18,57 @@ DATA_DIR = ROOT / "data"
 VN_NAMES = [
     "Hà Mạnh Dũng", "Nguyễn Văn An", "Trần Thị Bình", "Lê Minh Châu", "Phạm Quốc Đạt",
     "Hoàng Thu Hà", "Võ Thanh Phong", "Đặng Mỹ Linh", "Bùi Đức Huy", "Ngô Bảo Trâm",
+    "Đỗ Minh Khang", "Mai Anh Thư", "Lương Đức Thành", "Phan Hải Yến", "Tạ Quang Huy",
+    "Vũ Thị Lan", "Cao Nhật Minh", "Đinh Công Sơn", "Lý Bảo Ngọc", "Trịnh Khánh Linh",
+    "Nguyễn Hoàng Nam", "Trần Quốc Bảo", "Lê Thị Hoa", "Phạm Anh Tuấn", "Hoàng Gia Bảo",
 ]
 EN_NAMES = [
     "Alex Nguyen", "Sarah Tran", "James Le", "Mia Pham", "Chris Vo",
     "Linda Hoang", "David Bui", "Emma Ngo", "Ryan Dang", "Sophie Vu",
+    "Kevin Phan", "Amy Do", "Brian Ly", "Nina Cao", "Jason Dinh",
+    "Olivia Ta", "Ethan Mai", "Grace Luong", "Henry Trinh", "Chloe Vu",
 ]
 COMPANIES = [
     "FPT Software", "Smart Solution VietNam", "Lumi R&D VietNam", "VNG Corporation",
     "Tiki Trading", "Shopee Vietnam", "MoMo", "NashTech", "KMS Technology",
     "Công ty ABC", "CMC Global", "Axon Active", "Be Group", "Zalo Group",
+    "Viettel Solutions", "VNPay", "TikiNOW", "Grab Vietnam", "Lazada Vietnam",
+    "Công ty TNHH DigiSoft", "Renesas Design Vietnam", "Samsung R&D Vietnam",
+    "MISA JSC", "Base.vn", "Techcombank Digital", "MB Bank IT", "VIB Digital",
+    "Holistics Software", "AkaBot", "Funix", "TopCV Technology",
 ]
 TITLES = [
     "Backend Developer", "Frontend Developer", "Fullstack Developer",
     "Thực tập sinh Fullstack", "Thực tập sinh AI Engineer", "Java Developer",
     "Mobile Developer", "DevOps Engineer", "Data Engineer", "QA Engineer",
+    "Software Engineer", "ML Engineer", "Android Developer", "iOS Developer",
+    "Site Reliability Engineer", "Product Engineer", "Security Engineer",
 ]
 SCHOOLS = [
     "Học viện Công nghệ Bưu chính Viễn thông",
     "Đại học Bách khoa Hà Nội",
     "Đại học Công nghệ - ĐHQGHN",
-    "PTIT",
-    "UIT",
-    "University of Science",
+    "PTIT", "UIT", "University of Science",
+    "Đại học FPT", "Đại học Khoa học Tự nhiên TP.HCM",
+    "Đại học Đà Nẵng - Khoa CNTT", "RMIT Vietnam",
 ]
-MAJORS = ["CNTT", "Khoa học máy tính", "Công nghệ thông tin", "Software Engineering", "AI"]
-PROG_SKILLS = ["Python", "Java", "JavaScript", "TypeScript", "C++", "Go", "PHP"]
-BACKEND = ["FastAPI", "NestJS", "Spring Boot", "Django", "NodeJS", "Express"]
-FRONTEND = ["React", "Angular", "Vue", "Next.js"]
-DBS = ["MySQL", "PostgreSQL", "MongoDB", "Redis"]
+MAJORS = [
+    "CNTT", "Khoa học máy tính", "Công nghệ thông tin", "Software Engineering", "AI",
+    "An toàn thông tin", "Kỹ thuật phần mềm", "Data Science",
+]
+PROG_SKILLS = ["Python", "Java", "JavaScript", "TypeScript", "C++", "Go", "PHP", "Kotlin", "Swift", "Rust"]
+BACKEND = ["FastAPI", "NestJS", "Spring Boot", "Django", "NodeJS", "Express", "Gin", "Laravel"]
+FRONTEND = ["React", "Angular", "Vue", "Next.js", "Nuxt", "Svelte"]
+DBS = ["MySQL", "PostgreSQL", "MongoDB", "Redis", "Elasticsearch", "Cassandra"]
 SPOKEN = [
     ("English", "IELTS 6.5"),
     ("English", "TOEIC 800"),
+    ("English", "IELTS 7.0"),
     ("Japanese", "N3"),
     ("Japanese", "N2"),
     ("Chinese", "HSK 4"),
+    ("Korean", "TOPIK II"),
+    ("French", "B1"),
 ]
 AWARDS = [
     "Top 10 ICPC Regional",
@@ -59,6 +76,9 @@ AWARDS = [
     "Champion Hackathon 2024",
     "Giải Nhì Olympic Tin học",
     "Best Freshman Project",
+    "AWS Student Challenge Winner",
+    "Giải Ba AI Challenge",
+    "Scholarship of Excellence",
 ]
 PROJECT_NAMES = [
     "HỆ THỐNG QUẢN LÝ ĐOÀN THANH NIÊN PTIT",
@@ -67,6 +87,10 @@ PROJECT_NAMES = [
     "E-commerce Inventory Dashboard",
     "Smart Home IoT Gateway",
     "Resume Ranking Service",
+    "Job Crawler Aggregator",
+    "Realtime Chat Support Bot",
+    "Hospital Appointment Booking",
+    "Microservices Order Platform",
 ]
 
 
@@ -301,10 +325,11 @@ def build_sample(lang: str) -> Dict[str, Any]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate CV field-mapper SFT JSONL")
-    parser.add_argument("--n", type=int, default=1600, help="Total samples")
+    parser.add_argument("--n", type=int, default=10000, help="Total samples")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--val-ratio", type=float, default=0.1)
     parser.add_argument("--out-dir", type=Path, default=DATA_DIR)
+    parser.add_argument("--preview", type=int, default=0, help="Print N sample previews")
     args = parser.parse_args()
 
     random.seed(args.seed)
@@ -327,9 +352,33 @@ def main() -> None:
                 f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
     avg_chars = sum(s["meta"]["completion_chars"] for s in samples) / len(samples)
-    print(f"Wrote {len(train)} train → {train_path}")
-    print(f"Wrote {len(val)} val → {val_path}")
+    print(f"Wrote {len(train)} train -> {train_path} ({train_path.stat().st_size / 1e6:.1f} MB)")
+    print(f"Wrote {len(val)} val -> {val_path} ({val_path.stat().st_size / 1e6:.1f} MB)")
     print(f"Avg completion chars: {avg_chars:.0f}")
+
+    # Manifest for humans / Kaggle
+    manifest = {
+        "train_samples": len(train),
+        "val_samples": len(val),
+        "avg_completion_chars": round(avg_chars),
+        "format": "chat JSONL — messages[system,user,assistant]",
+        "task": "CV field placement correction (wrong draft → correct profile JSON)",
+        "languages": ["vi", "en"],
+        "error_injections": [
+            "swap_title", "merge_jobs", "edu_in_awards", "prog_in_languages", "merge_projects",
+        ],
+    }
+    (args.out_dir / "manifest.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    print("Wrote", args.out_dir / "manifest.json")
+
+    if args.preview > 0:
+        for i, s in enumerate(train[: args.preview]):
+            print(f"\n===== PREVIEW {i} injected={s['meta']['injected']} =====")
+            snippet = s["messages"][1]["content"][:500].encode("ascii", "replace").decode("ascii")
+            print(snippet, "...")
+            print("ASSISTANT keys:", list(json.loads(s["messages"][2]["content"]).keys()))
 
 
 if __name__ == "__main__":
