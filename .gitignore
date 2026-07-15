@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.idea/
+.ipynb_checkpoints/
+artifacts/lora/
+artifacts/merged/
+artifacts/checkpoints/
+*.safetensors
+*.bin
+*.gguf
+.cache/
