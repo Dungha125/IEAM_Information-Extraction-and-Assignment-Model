@@ -1,7 +1,8 @@
 # Kaggle / GPU training
+# On Kaggle: prefer Accelerator = GPU T4 (not P100) — modern PyTorch needs sm_70+.
 torch>=2.2.0
 transformers>=4.44.0,<5.0
-peft>=0.12.0
+peft>=0.12.0,<0.15
 datasets>=2.20.0,<4.0
 accelerate>=0.33.0
 sentencepiece>=0.2.0

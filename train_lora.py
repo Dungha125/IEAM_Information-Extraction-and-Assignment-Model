@@ -116,13 +116,15 @@ def main() -> None:
         tokenizer.pad_token = tokenizer.eos_token
 
     dtype = torch.bfloat16 if use_bf16 else (torch.float16 if use_fp16 else torch.float32)
-    model = AutoModelForCausalLM.from_pretrained(
-        args.model,
+    load_kwargs = dict(
         trust_remote_code=True,
         torch_dtype=dtype,
         low_cpu_mem_usage=True,
-        device_map="auto" if use_cuda else None,
     )
+    # device_map="auto" can confuse PEFT on some Kaggle stacks — use explicit .cuda()
+    model = AutoModelForCausalLM.from_pretrained(args.model, **load_kwargs)
+    if use_cuda:
+        model = model.cuda()
     model.config.use_cache = False
     if hasattr(model, "enable_input_require_grads"):
         model.enable_input_require_grads()
